@@ -8,6 +8,11 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Log;
 
+enum Direction {
+	UP, DOWN, RIGHT, LEFT, NONE;
+	boolean virtical() { return this == UP || this == DOWN; }
+	boolean horizontal() { return this == RIGHT || this == LEFT; }
+}
 class LogicalTile {
 	int serial;	// start with zero
 	Point lp;	// logical position
@@ -100,16 +105,26 @@ public class LogicalBoard {
 		}
 		return null;
 	}
+	Direction getDirection(LogicalTile tile) {
+		Point h = hole.lp; Point t = tile.lp;
+		if (h.x != t.x && h.y != t.y) return Direction.NONE;
+		return (h.x == t.x)?
+				(h.y < t.y)? Direction.UP : Direction.DOWN :
+				(h.x < t.x)? Direction.LEFT : Direction.RIGHT;
+	}
 	List<LogicalTile> getMovables(LogicalTile lgTile) {
-		Point h = hole.lp; Point t = lgTile.lp;
-		if (h.x == t.x) {
-			
-		} else if (h.y == t.y) {
-			
+		Direction d = getDirection(lgTile);
+		if (d == Direction.NONE) return null; 
+		List<LogicalTile> movables = new ArrayList<LogicalTile>();
+		int s; Point h = hole.lp;
+		if (d.virtical()) {
+			s = (d == Direction.RIGHT)? 1 : -1;
+			for (int i=0; i!=s; i+=s) movables.add(tiles[h.y][i]);
 		} else {
-			
+			s = (d == Direction.UP)? 1 : -1;
+			for (int i=0; i!=s; i+=s) movables.add(tiles[i][h.x]);
 		}
-		return null;
+		return movables;
 	}
 	void print() {
 		Log.d(TAG, "- footprints=" + footprints.size() + ", distance=" + distance);

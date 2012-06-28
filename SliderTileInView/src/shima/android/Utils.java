@@ -21,11 +21,12 @@ public class Utils {
 		return matrix;
 	}
 	public static Rect translated(Rect src, Point offset) {
-		Rect dst = new Rect();
-		dst.top		= offset.y + src.top;
-		dst.left	= offset.x + src.left;
-		dst.bottom	= offset.y + src.bottom;
-		dst.right	= offset.x + src.right;	
+		Rect dst = new Rect(src);
+		if (offset == null) return dst;
+		dst.top		+= offset.y;
+		dst.left	+= offset.x;
+		dst.bottom	+= offset.y;
+		dst.right	+= offset.x;
 		return dst;
 	}
 }
